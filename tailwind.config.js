@@ -1,28 +1,29 @@
-// tailwind.config.js
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-    "./src/**/*.{js,ts,jsx,tsx}"
+    "./app/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        sans: ["Inter", "sans-serif"]
       },
       colors: {
-        primary: '#1E40AF',
-        secondary: '#64748B',
-        accent: '#06B6D4',
-        background: '#F1F5F9',
-        foreground: '#0F172A',
+        primary: "#0A84FF",
+        secondary: "#1C1C1E",
+        accent: "#30D158",
+        background: "#F2F2F7",
+        foreground: "#000000",
+        muted: "#8E8E93"
       },
-    },
+      borderRadius: {
+        xl: "1.25rem"
+      }
+    }
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('tailwind-scrollbar'),
-  ],
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography")
+  ]
 };
