@@ -1,33 +1,33 @@
 // src/components/layout/Layout.tsx
 import Head from 'next/head'
-import type { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 interface LayoutProps {
   children: ReactNode
   title?: string
   description?: string
+  canonical?: string
 }
 
 export default function Layout({
   children,
-  title = 'Capsule Memory Economy | GuardianChain',
-  description = 'Preserve and verify memory capsules on-chain with AI-integrated infrastructure.'
+  title = 'GuardianChain • Capsule Memory Economy',
+  description = 'Verify, preserve, and monetize memory capsules using on-chain AI-integrated truth infrastructure.',
+  canonical
 }: LayoutProps) {
   return (
     <>
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0A84FF" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        {canonical && <link rel="canonical" href={canonical} />}
+        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-h-screen bg-background text-foreground font-sans antialiased">
+      <main className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/20">
         {children}
       </main>
     </>
