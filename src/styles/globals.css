@@ -1,0 +1,90 @@
+/* src/styles/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------------------------------------------------- */
+/* Reset + Base Layer Enhancements                   */
+/* -------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-background text-foreground font-sans antialiased min-h-screen leading-relaxed;
+}
+
+*,
+*::before,
+*::after {
+  @apply box-border;
+}
+
+::selection {
+  @apply bg-primary/20;
+}
+
+/* -------------------------------------------------- */
+/* Dark Mode Setup                                   */
+/* -------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------- */
+/* Forms + Links + Typography                        */
+/* -------------------------------------------------- */
+
+input,
+textarea,
+select,
+button {
+  @apply outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+}
+
+a {
+  @apply underline underline-offset-2 text-primary hover:text-primary/80 transition-colors duration-150;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold tracking-tight;
+}
+
+/* Responsive typography */
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* -------------------------------------------------- */
+/* Utility Additions                                 */
+/* -------------------------------------------------- */
+
+.container {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.prose {
+  @apply prose prose-neutral dark:prose-invert;
+}
