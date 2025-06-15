@@ -1,89 +1,76 @@
 // src/components/capsules/CapsuleGallery.tsx
-import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useState } from 'react'
+
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import CapsuleCard from '@/components/gallery/CapsuleCard'
+import Lottie from 'lottie-react'
+import emptyAnimation from '@/public/lottie/empty-gallery.json'
 
 interface Capsule {
   id: string
+  imageUrl: string
   title: string
   description: string
-  imageUrl: string
 }
 
-const defaultCapsules: Capsule[] = [
-  {
-    id: '001',
-    title: 'Genesis Capsule',
-    description: 'The first AI-on-chain verified memory.',
-    imageUrl: 'https://gateway.pinata.cloud/ipfs/QmHash1',
-  },
-  {
-    id: '002',
-    title: 'Echo Fragment',
-    description: 'Recorded through augmented lens AI stream.',
-    imageUrl: 'https://gateway.pinata.cloud/ipfs/QmHash2',
-  },
-  {
-    id: '003',
-    title: 'Timelock Chronicle',
-    description: 'Sealed with a Proof-of-Memory contract.',
-    imageUrl: 'https://gateway.pinata.cloud/ipfs/QmHash3',
-  },
-]
+export default function CapsuleGallery() {
+  const [capsules, setCapsules] = useState<Capsule[]>([])
+  const [loading, setLoading] = useState(true)
 
-export default function CapsuleGallery({
-  capsules = defaultCapsules,
-}: {
-  capsules?: Capsule[]
-}) {
-  const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({})
+  useEffect(() => {
+    async function fetchCapsules() {
+      // TODO: Replace this mock with actual backend fetch (Pinata IPFS or Supabase)
+      const mockData = [
+        {
+          id: 'capsule-001',
+          imageUrl: '/mock/capsule1.png',
+          title: 'Memory of the Meadow',
+          description: 'A peaceful capsule stored on-chain.'
+        },
+        {
+          id: 'capsule-002',
+          imageUrl: '/mock/capsule2.png',
+          title: 'Echoes of the Past',
+          description: 'Preserved forever via GuardianChain.'
+        }
+      ]
+      setCapsules(mockData)
+      setLoading(false)
+    }
+
+    fetchCapsules()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <span className="text-muted-foreground animate-pulse text-lg">Loading capsules...</span>
+      </div>
+    )
+  }
 
   return (
-    <section
-      className="py-20 px-4 bg-background text-foreground transition-colors duration-300"
-      aria-label="Capsule Gallery"
-    >
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-extrabold mb-12">
-          Explore Memory Capsules
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {capsules.map((capsule, i) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 py-12">
+      <AnimatePresence>
+        {capsules.length > 0 ? (
+          capsules.map(capsule => (
             <motion.div
               key={capsule.id}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="relative rounded-xl overflow-hidden bg-white/5 border border-white/10 shadow-xl backdrop-blur-lg"
-              role="article"
-              aria-label={capsule.title}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
             >
-              <div className="aspect-w-16 aspect-h-10 relative">
-                <Image
-                  src={capsule.imageUrl}
-                  alt={capsule.title}
-                  fill
-                  className={`object-cover transition-opacity duration-700 ${
-                    loaded[capsule.id] ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  onLoadingComplete={() =>
-                    setLoaded((prev) => ({ ...prev, [capsule.id]: true }))
-                  }
-                />
-                {!loaded[capsule.id] && (
-                  <div className="absolute inset-0 animate-pulse bg-muted/30 rounded-t-xl" />
-                )}
-              </div>
-              <div className="p-5">
-                <h3 className="text-xl font-semibold">{capsule.title}</h3>
-                <p className="text-sm text-muted mt-2">{capsule.description}</p>
-              </div>
+              <CapsuleCard {...capsule} />
             </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center text-muted-foreground text-center">
+            <Lottie animationData={emptyAnimation} className="w-64 h-64" />
+            <p className="mt-4 text-sm">No capsules yet. Upload your first memory capsule.</p>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
