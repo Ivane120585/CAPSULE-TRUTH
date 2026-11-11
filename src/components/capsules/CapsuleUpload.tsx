@@ -28,39 +28,30 @@ export default function CapsuleUpload() {
     setIsUploading(true)
 
     try {
-      // Upload to Pinata
       const formData = new FormData()
       formData.append('file', file)
-      const metadata = JSON.stringify({ name: title, keyvalues: { description } })
-      formData.append('pinataMetadata', metadata)
-      formData.append('pinataOptions', JSON.stringify({ cidVersion: 1 }))
+      formData.append('title', title)
+      formData.append('description', description)
 
-      const pinataRes = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
-        maxBodyLength: Infinity,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET!,
-        },
+      const response = await fetch('/api/capsules', {
+        method: 'POST',
+        body: formData,
       })
 
-      const ipfsHash = pinataRes.data.IpfsHash
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Upload failed')
+      }
 
-      // Save to Supabase
-      await axios.post('/api/capsules', {
-        title,
-        description,
-        ipfsHash
-      })
-
-      alert('Memory capsule uploaded successfully!')
+      const data = await response.json()
+      alert(`Memory capsule uploaded successfully! ${data.ipfsHash ? `IPFS: ${data.ipfsHash}` : ''}`)
       setFile(null)
       setTitle('')
       setDescription('')
       setPreviewUrl(null)
     } catch (err) {
       console.error(err)
-      alert('Upload failed. Please try again.')
+      alert(err instanceof Error ? err.message : 'Upload failed. Please try again.')
     } finally {
       setIsUploading(false)
     }

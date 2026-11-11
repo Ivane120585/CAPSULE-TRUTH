@@ -1,7 +1,15 @@
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
+import Hero from '@/components/landing/Hero'
+
 export default function Home() {
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-primary">Welcome to GuardianChain</h1>
-    </main>
-  );
+    <>
+      <Header />
+      <main className="min-h-screen bg-background text-foreground">
+        <Hero />
+      </main>
+      <Footer />
+    </>
+  )
 }
