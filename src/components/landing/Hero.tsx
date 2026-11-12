@@ -20,8 +20,8 @@ export default function Hero() {
         </h1>
 
         <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-          Mint immutable memory capsules with GuardianChain. Powered by AI, stored on-chain,
-          and sovereign by design. This is the beginning of the Memory Economy.
+          Create a memory capsule and store its image and metadata on a self-hosted IPFS node.
+          Content on the public IPFS network can be copied by others.
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -29,13 +29,13 @@ export default function Hero() {
             href="/capsules/new"
             className="px-6 py-3 text-white bg-primary hover:bg-primary/90 rounded-xl text-lg font-medium shadow-md transition"
           >
-            Mint a Capsule
+            Create a Capsule
           </Link>
           <Link
-            href="/veritas"
+            href="/docs"
             className="px-6 py-3 border border-border bg-background hover:bg-accent rounded-xl text-lg font-medium shadow-sm transition"
           >
-            Learn About Veritas
+            Learn More
           </Link>
         </div>
       </div>

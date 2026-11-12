@@ -32,10 +32,6 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button className="px-4 py-1.5 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-            Connect Wallet
-          </button>
-
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-foreground hover:text-primary"

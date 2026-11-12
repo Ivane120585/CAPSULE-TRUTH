@@ -28,6 +28,8 @@ export default function CapsuleUpload() {
     setUploadedHash('')
 
     if (!selectedFile) {
+      setFile(null)
+      setPreviewUrl(null)
       setErrorMessage(fileRejections[0]?.errors[0]?.message || 'Select a supported image.')
       return
     }
@@ -84,6 +86,9 @@ export default function CapsuleUpload() {
   return (
     <div className="bg-white dark:bg-black p-6 rounded-xl shadow-xl w-full max-w-xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">🧠 Upload a Memory Capsule</h2>
+      <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+        IPFS content can be public and copied by others. Do not upload private or sensitive material.
+      </p>
 
       <div {...getRootProps()} className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragActive ? 'border-primary' : 'border-gray-400 dark:border-gray-600'}`}>
         <input {...getInputProps()} />

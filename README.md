@@ -38,6 +38,8 @@ The web app listens on port `3000` by default; set `PORT` to change the host por
 
 Uploads and content links use the self-hosted node through the app; no Pinata account, analytics service, or external gateway credentials are required.
 
+**Before public deployment:** the upload endpoint has no authentication or storage quota, and the app does not provide TLS. Restrict access and add suitable authentication, upload limits, monitoring, backups, and HTTPS before exposing it to the internet. Kubo's API can control the node and must remain inaccessible to untrusted users, including other users on the host. IPFS content is public and may be copied by peers; do not upload private or sensitive material.
+
 ## Available scripts
 
 | Command | Purpose |
@@ -52,4 +54,4 @@ Uploads and content links use the self-hosted node through the app; no Pinata ac
 
 The upload form accepts JPEG, PNG, WebP, or GIF images up to 10 MB, along with a title (up to 120 characters) and description (up to 2,000 characters). `POST /api/capsules` validates the request, pins the image and a JSON metadata document to the local Kubo node, and returns their IPFS hashes. `GET /api/ipfs/:cid` serves content through the local gateway on the app's origin.
 
-The gallery currently uses sample content; uploaded capsules are not yet indexed for gallery listing. The local node keeps its own copy pinned; participation in the public IPFS network does not guarantee that another operator will also pin the content.
+Uploaded capsules are not yet indexed for gallery listing. Blockchain minting, identity and origin verification, and DAO governance are not implemented. The local node keeps its own copy pinned; participation in the public IPFS network does not guarantee that another operator will also pin the content.

@@ -8,7 +8,7 @@ export default function DaoPage() {
       <main className="mx-auto max-w-5xl px-6 py-16">
         <h1 className="text-4xl font-bold text-primary">DAO</h1>
         <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
-          Governance and stewardship are centered on accountability, verification, and sovereignty.
+          DAO governance is not implemented yet.
         </p>
       </main>
       <Footer />
