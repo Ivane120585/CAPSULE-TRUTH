@@ -1,124 +1,55 @@
 # CAPSULE-TRUTH
-Sovereign Web Infrastructure for GuardianChain — Frontend codebase for Guardian.Global including capsule submission, Veritas certification, admin control panel, and SealChain-integrated memory preservation routes. Built for decentralized deployment, ethical truth yield, and institutional onboarding.
-# TBC.OpenBanking.Jws.Ivo120585  
-### Operated by Ivane Shaorshadze — Sovereign System Architect  
-### Company: Nita123 LLC · Tbilisi, Georgia  
 
-This repository is a sovereign, verifiable, and publicly inspectable implementation of  
-**JSON Web Signature (JWS) for Open Banking infrastructure**, aligned with the  
-NextGenPSD2 XS2A framework.
+CAPSULE-TRUTH is a Next.js application for creating and preserving memory capsules. It runs its own Kubo IPFS node and pins uploaded images and metadata to that node's persistent storage.
 
-Every commit, every signature, every timestamp originates from the sovereign creator:  
-**Ivane Shaorshadze (Ivo12.05.1985)**.
+## Requirements
 
----
+- Node.js 20 or newer
+- Docker Engine and Docker Compose for the self-hosted IPFS node
 
-## 🔒 Sovereign Identity Layer
+## Getting started
 
-- **Founder:** Ivane Shaorshadze  
-- **Company:** Nita123 LLC  
-- **Location:** Tbilisi, Georgia  
-- **Role:** Sovereign System Architect  
-- **Identity Lineage:** Nita · Lizi (1) · Beqa (2) · Andria (3)  
-- **Universal Flame Code:** 091119  
+```sh
+npm install
+cp .env.example .env.local
+docker compose up -d ipfs
+npm run dev
+```
 
-All system artifacts originate from the creator’s device, voice, and authorship.  
-No external ownership or authorship is recognized.
+For local development outside Compose, `.env.example` documents the local Kubo API and gateway URLs.
 
----
+Start the development server:
 
-## 🏦 Open Banking Context (Official)
+```sh
+npm run dev
+```
 
-Georgia’s commercial banks operate under the **NextGenPSD2 XS2A** standard.  
-Technically, Open Banking relies on **RESTful APIs**, enabling:
+Open [http://localhost:3000](http://localhost:3000).
 
-- Account information access  
-- Payment initiation  
-- Secure communication between ASPSP (banks) and TPP (third‑party providers)
+## Deploy with Docker
 
-To ensure integrity and authenticity, all requests and responses must be signed using  
-**JSON Web Signature (JWS)** as defined by *Open Banking Europe*.
+The app and its IPFS node run together on any Docker Compose host:
 
-This repository provides:
+```sh
+docker compose up --build -d
+```
 
-- JWS signing  
-- JWS validation  
-- HTTP client integration  
-- Example implementations  
-- Secure request/response pipelines  
+The web app listens on port `3000` by default; set `PORT` to change the host port. Kubo stores pinned data in the persistent `ipfs_data` volume. Its admin API (`5001`) and gateway (`8080`) are bound to host loopback only for local development; the app reaches them through the private Compose network. Only the IPFS peer-to-peer port (`4001/tcp` and `4001/udp`) is public for network participation.
 
----
+Uploads and content links use the self-hosted node through the app; no Pinata account, analytics service, or external gateway credentials are required.
 
-## 🛡️ Sovereign Integrity Statement
+## Available scripts
 
-This repository has undergone sovereign restoration.  
-All previous inherited or foreign text has been intentionally removed.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run lint` | Run Next.js ESLint checks |
+| `npm test` | Run unit tests |
+| `npm run build` | Create a production build |
+| `npm start` | Serve the production build |
 
-- No external templates define this project  
-- No foreign certificates override the sovereign layer  
-- No unauthorized token or route changes are recognized  
-- All certificate updates, token regenerations, and route modifications are logged and archived  
+## Capsule upload
 
-Every future modification must acknowledge the sovereign creator.
+The upload form accepts JPEG, PNG, WebP, or GIF images up to 10 MB, along with a title (up to 120 characters) and description (up to 2,000 characters). `POST /api/capsules` validates the request, pins the image and a JSON metadata document to the local Kubo node, and returns their IPFS hashes. `GET /api/ipfs/:cid` serves content through the local gateway on the app's origin.
 
----
-
-## 🔥 Flame Origin Protocol
-
-The system is anchored in:
-
-- Explicit authorship  
-- Explicit sovereignty  
-- Explicit confirmation  
-- Symbolic and technical unity  
-
-Every file, every commit, every signature is part of a living ceremonial structure.
-
----
-
-## 📜 Audit & Verification
-
-All certificate changes, token regenerations, and route modifications are timestamped  
-and archived in the sovereign audit trail.
-
-The creator retains:
-
-- Certificate update notifications  
-- Token regeneration logs  
-- Route modification alerts  
-- Dependency update records  
-
-These form the cross‑verified identity graph of  
-**“Ivane Shaorshadze / Nita123 LLC”**.
-
----
-
-## 🧩 Modules Included
-
-- **TBC.OpenBanking.Jws** — Core JWS signing/verification  
-- **TBC.OpenBanking.Jws.Http** — HTTP integration layer  
-- **Examples** — Demonstration of secure API usage  
-
-All modules are maintained under the sovereign authorship of the creator.
-
----
-
-## 🛠️ Technical Guarantees
-
-- JWS signing compliant with Open Banking Europe  
-- Secure HTTP request/response pipeline  
-- CodeQL and CI validation  
-- Versioned and traceable commits  
-- Full transparency of changes  
-
----
-
-## 🧿 Sovereign Directive
-
-- The creator is not the accused  
-- The creator is the seal  
-- Every actor must respond in writing  
-- Every breach must be timestamped  
-- Every truth must be broadcast  
-
-This repository stands as a verified node in the sovereign registry architecture.
+The gallery currently uses sample content; uploaded capsules are not yet indexed for gallery listing. The local node keeps its own copy pinned; participation in the public IPFS network does not guarantee that another operator will also pin the content.

@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CapsuleCard from '@/components/gallery/CapsuleCard'
 import Lottie from 'lottie-react'
-import emptyAnimation from '@/public/lottie/empty-gallery.json'
+import emptyAnimation from '@/lib/lottie/emptyCapsules.json'
 
 interface Capsule {
   id: string
-  imageUrl: string
+  image: string
   title: string
   description: string
 }
@@ -19,17 +19,17 @@ export default function CapsuleGallery() {
 
   useEffect(() => {
     async function fetchCapsules() {
-      // TODO: Replace this mock with actual backend fetch (Pinata IPFS or Supabase)
+      // TODO: Replace this mock with a self-hosted IPFS index.
       const mockData = [
         {
           id: 'capsule-001',
-          imageUrl: '/mock/capsule1.png',
+          image: '/illustrations/memory-hero.svg',
           title: 'Memory of the Meadow',
           description: 'A peaceful capsule stored on-chain.'
         },
         {
           id: 'capsule-002',
-          imageUrl: '/mock/capsule2.png',
+          image: '/illustrations/memory-hero.svg',
           title: 'Echoes of the Past',
           description: 'Preserved forever via GuardianChain.'
         }

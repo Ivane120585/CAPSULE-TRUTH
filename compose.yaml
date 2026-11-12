@@ -1,0 +1,44 @@
+services:
+  ipfs:
+    image: ipfs/kubo:v0.43.1
+    restart: unless-stopped
+    environment:
+      IPFS_PATH: /data/ipfs
+    volumes:
+      - ipfs_data:/data/ipfs
+    ports:
+      - "4001:4001/tcp"
+      - "4001:4001/udp"
+      - "127.0.0.1:5001:5001"
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  capsules:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      ipfs:
+        condition: service_healthy
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      IPFS_API_URL: http://ipfs:5001
+      IPFS_GATEWAY_URL: http://ipfs:8080
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  ipfs_data:

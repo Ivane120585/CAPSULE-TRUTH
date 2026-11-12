@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Hero() {
   return (
@@ -45,9 +46,11 @@ export default function Hero() {
         transition={{ delay: 0.6 }}
         className="mt-14"
       >
-        <img
+        <Image
           src="/illustrations/memory-hero.svg"
           alt="Capsule illustration"
+          width={800}
+          height={520}
           className="w-full max-w-md mx-auto opacity-90"
         />
       </motion.div>

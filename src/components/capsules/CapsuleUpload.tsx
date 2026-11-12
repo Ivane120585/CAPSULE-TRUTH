@@ -1,8 +1,11 @@
 // src/components/capsules/CapsuleUpload.tsx
-import { useCallback, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { useCallback, useEffect, useState } from 'react'
+import { useDropzone, type FileRejection } from 'react-dropzone'
 import Image from 'next/image'
-import axios from 'axios'
+import {
+  ALLOWED_CAPSULE_IMAGE_TYPES,
+  MAX_CAPSULE_FILE_SIZE,
+} from '@/lib/capsuleValidation'
 
 export default function CapsuleUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -10,48 +13,69 @@ export default function CapsuleUpload() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [uploadedHash, setUploadedHash] = useState('')
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
+
+  const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     const selectedFile = acceptedFiles[0]
+    setErrorMessage('')
+    setUploadedHash('')
+
+    if (!selectedFile) {
+      setErrorMessage(fileRejections[0]?.errors[0]?.message || 'Select a supported image.')
+      return
+    }
+
     setFile(selectedFile)
     setPreviewUrl(URL.createObjectURL(selectedFile))
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': [] },
+    accept: Object.fromEntries(
+      ALLOWED_CAPSULE_IMAGE_TYPES.map((type) => [type, []])
+    ),
+    maxSize: MAX_CAPSULE_FILE_SIZE,
     multiple: false
   })
 
-  const handleUpload = async () => {
-    if (!file) return
+  const handleUpload = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!file || !title.trim() || !description.trim()) return
+
     setIsUploading(true)
+    setErrorMessage('')
+    setUploadedHash('')
 
     try {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('title', title)
-      formData.append('description', description)
+      formData.append('title', title.trim())
+      formData.append('description', description.trim())
 
       const response = await fetch('/api/capsules', {
         method: 'POST',
         body: formData,
       })
 
+      const data = await response.json()
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Upload failed')
+        throw new Error(data.error || 'Upload failed')
       }
 
-      const data = await response.json()
-      alert(`Memory capsule uploaded successfully! ${data.ipfsHash ? `IPFS: ${data.ipfsHash}` : ''}`)
+      setUploadedHash(data.ipfsHash)
       setFile(null)
       setTitle('')
       setDescription('')
       setPreviewUrl(null)
     } catch (err) {
-      console.error(err)
-      alert(err instanceof Error ? err.message : 'Upload failed. Please try again.')
+      setErrorMessage(err instanceof Error ? err.message : 'Upload failed. Please try again.')
     } finally {
       setIsUploading(false)
     }
@@ -64,35 +88,52 @@ export default function CapsuleUpload() {
       <div {...getRootProps()} className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragActive ? 'border-primary' : 'border-gray-400 dark:border-gray-600'}`}>
         <input {...getInputProps()} />
         {previewUrl ? (
-          <Image src={previewUrl} alt="Preview" width={320} height={200} className="mx-auto rounded-md" />
+          <Image src={previewUrl} alt="Preview" width={320} height={200} unoptimized className="mx-auto rounded-md" />
         ) : (
-          <p className="text-gray-500">Drag & drop an image or click to select</p>
+          <p className="text-gray-500">Drag and drop a JPEG, PNG, WebP, or GIF image (up to 10 MB), or click to select.</p>
         )}
       </div>
 
-      <input
-        type="text"
-        placeholder="Capsule Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="mt-4 w-full border px-4 py-2 rounded-md dark:bg-zinc-900 dark:text-white"
-      />
+      <form onSubmit={handleUpload}>
+        <label className="sr-only" htmlFor="capsule-title">Capsule title</label>
+        <input
+          id="capsule-title"
+          type="text"
+          placeholder="Capsule Title"
+          value={title}
+          maxLength={120}
+          onChange={(e) => setTitle(e.target.value)}
+          className="mt-4 w-full border px-4 py-2 rounded-md dark:bg-zinc-900 dark:text-white"
+          required
+        />
 
-      <textarea
-        placeholder="Capsule Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        rows={3}
-        className="mt-2 w-full border px-4 py-2 rounded-md dark:bg-zinc-900 dark:text-white"
-      />
+        <label className="sr-only" htmlFor="capsule-description">Capsule description</label>
+        <textarea
+          id="capsule-description"
+          placeholder="Capsule Description"
+          value={description}
+          maxLength={2000}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+          className="mt-2 w-full border px-4 py-2 rounded-md dark:bg-zinc-900 dark:text-white"
+          required
+        />
 
-      <button
-        disabled={!file || !title || !description || isUploading}
-        onClick={handleUpload}
-        className="mt-4 w-full bg-primary text-white font-semibold py-2 px-4 rounded-md disabled:opacity-50"
-      >
-        {isUploading ? 'Uploading...' : 'Mint Capsule'}
-      </button>
+        <button
+          type="submit"
+          disabled={!file || !title.trim() || !description.trim() || isUploading}
+          className="mt-4 w-full bg-primary text-white font-semibold py-2 px-4 rounded-md disabled:opacity-50"
+        >
+          {isUploading ? 'Uploading...' : 'Upload Capsule'}
+        </button>
+      </form>
+
+      {errorMessage && <p role="alert" className="mt-3 text-sm text-red-600">{errorMessage}</p>}
+      {uploadedHash && (
+        <p role="status" className="mt-3 text-sm text-green-700 dark:text-green-400">
+          Capsule uploaded. Metadata: <a className="underline" href={`/api/ipfs/${uploadedHash}`} target="_blank" rel="noreferrer">{uploadedHash}</a>
+        </p>
+      )}
     </div>
   )
 }
